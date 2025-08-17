@@ -13,13 +13,6 @@ interface ChatAreaProps {
   isMobile: boolean
 }
 
-const SUGGESTION_QUESTIONS = [
-  "What are the key points in my documents?",
-  "Can you summarize the main topics?",
-  "Help me find specific information",
-  "What insights can you provide from my files?",
-]
-
 export default function ChatArea({ isSidebarOpen, onToggleSidebar, isMobile }: ChatAreaProps) {
   const { state, sendMessage, dispatch } = useChat()
   const [inputValue, setInputValue] = useState("")
@@ -45,21 +38,6 @@ export default function ChatArea({ isSidebarOpen, onToggleSidebar, isMobile }: C
 
     try {
       await sendMessage(message)
-    } catch (error) {
-      console.error("Error sending message:", error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleSuggestionClick = async (question: string) => {
-    if (!state.activeChat) {
-      dispatch({ type: "CREATE_CHAT" })
-    }
-
-    setIsSubmitting(true)
-    try {
-      await sendMessage(question)
     } catch (error) {
       console.error("Error sending message:", error)
     } finally {
@@ -149,21 +127,8 @@ export default function ChatArea({ isSidebarOpen, onToggleSidebar, isMobile }: C
                 <>
                   <h3 className="text-2xl font-bold text-foreground mb-4 font-work-sans">Ready to Chat!</h3>
                   <p className="text-muted-foreground mb-6 leading-relaxed">
-                    Your documents are ready. Start a conversation by asking a question or try one of these suggestions:
+                    Your documents are ready. Start a conversation by typing your question below.
                   </p>
-
-                  <div className="grid grid-cols-1 gap-3 text-sm mb-6">
-                    {SUGGESTION_QUESTIONS.map((question, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSuggestionClick(question)}
-                        disabled={isSubmitting}
-                        className="p-3 bg-muted hover:bg-accent rounded-lg text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <p className="font-medium text-foreground">{question}</p>
-                      </button>
-                    ))}
-                  </div>
                 </>
               )}
 
