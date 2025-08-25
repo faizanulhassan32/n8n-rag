@@ -179,51 +179,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialState)
 
   useEffect(() => {
-    const savedChats = localStorage.getItem("chatbot-chats")
-    const savedUsername = localStorage.getItem("chatbot-username")
-    const savedFilesUploaded = localStorage.getItem("chatbot-files-uploaded")
+    localStorage.removeItem("chatbot-chats")
+    localStorage.removeItem("chatbot-username")
+    localStorage.removeItem("chatbot-files-uploaded")
 
-    if (savedChats) {
-      try {
-        const parsedChats = JSON.parse(savedChats).map((chat: any) => ({
-          ...chat,
-          createdAt: new Date(chat.createdAt),
-          updatedAt: new Date(chat.updatedAt),
-          messages: chat.messages.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp),
-          })),
-        }))
-        dispatch({ type: "LOAD_CHATS", payload: parsedChats })
-      } catch (error) {
-        console.error("Error loading chats from localStorage:", error)
-      }
-    }
-
-    if (savedUsername) {
-      dispatch({ type: "SET_USERNAME", payload: savedUsername })
-    }
-
-    if (savedFilesUploaded === "true") {
-      dispatch({ type: "SET_FILES_UPLOADED", payload: true })
-    }
+    // Start with completely fresh state - no loading from localStorage
+    console.log("[v0] Cleared localStorage for unique session")
   }, [])
-
-  useEffect(() => {
-    if (state.chats.length > 0) {
-      localStorage.setItem("chatbot-chats", JSON.stringify(state.chats))
-    }
-  }, [state.chats])
-
-  useEffect(() => {
-    if (state.username) {
-      localStorage.setItem("chatbot-username", state.username)
-    }
-  }, [state.username])
-
-  useEffect(() => {
-    localStorage.setItem("chatbot-files-uploaded", state.hasUploadedFiles.toString())
-  }, [state.hasUploadedFiles])
 
   const uploadFiles = async (files: FileList): Promise<boolean> => {
     if (!state.username || files.length === 0) return false
